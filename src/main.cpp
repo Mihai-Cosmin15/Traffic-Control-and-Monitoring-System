@@ -1,15 +1,19 @@
 #include <Arduino.h>
 #include "macros.h"
 #include "utils.h"
-// #include "test.h"
+#include "test.h"
 #include "timers.h"
+#include "usart.h"
+#include "commands.h"
 
 #define TEST_NO 1
 #define DISTANCE_TO_CAR 30
 
 int green_light_time = 10;
-int car_count = 0;
+int total_car_count = 0, interval_car_count = 0;
 bool car_detected = false;
+int command_size = 0;
+char command[MAX_COMMAND_SIZE];
 
 uint8_t state = 0;
 int blinking_count = 0, time_passed = 0, start_time = 0, timer = 0;
@@ -45,12 +49,30 @@ void setup() {
 
 	setLEDs(false, false, true);
 
-	Serial.begin(9600);
+	// Serial.begin(9600);
+	USART0_init(MYUBRR);
+	
 	sei();
 }
 
 void loop() {
-  // check(TEST_NO, last_debounce_time, debounce_delay, last_button_state, button_pressed);
+	// check(TEST_NO, last_debounce_time, debounce_delay, last_button_state, button_pressed);
+	char received;
+	if (USART0_receive_nonblocking(received)) {
+		USART0_print(&received);
+		if (received == '\n' || received == '\r') {
+			command[command_size++] = '\0';
+			manage_command(command, total_car_count);
+		} else {
+			if (command_size < MAX_COMMAND_SIZE) {
+				command[command_size++] = received;
+			} else {
+				USART0_print("Command error 1\n");
+				strcpy(command, "");
+				command_size = 0;
+			}
+		}
+	}
 
 	switch(state) {
 	case GREEN_LIGHT:
@@ -109,7 +131,7 @@ void loop() {
 				button_pressed = true;
 			} else if (reading == LOW && last_button_state == HIGH) {
 				button_pressed = false;
-				Serial.println(car_count);
+				Serial.println(total_car_count);
 			}
 			last_debounce_time = current_time;
 			last_button_state = reading;
@@ -130,10 +152,11 @@ void loop() {
 
 	unsigned long current_time = millis();
 	if (distance < DISTANCE_TO_CAR && !car_detected && current_time - last_detection > debounce_delay) {
-		car_count++;
+		total_car_count++;
+		interval_car_count++;
 		car_detected = true;
 		last_detection = current_time;
-	} else if (distance > DISTANCE_TO_CAR && car_detected && current_time - last_detection > debounce_delay) {
+	} else if (distance > DISTANCE_TO_CAR + 10 && car_detected && current_time - last_detection > debounce_delay) {
 		car_detected = false;
 		last_detection = current_time;
 	}

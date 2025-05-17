@@ -28,6 +28,13 @@
 #define YELLOW_LIGHT 2
 #define BLINKING_GREEN_LIGHT 3
 
+#define CLOCK_SPEED 16000000
+#define BAUD 9600
+#define MYUBRR (CLOCK_SPEED/16/BAUD-1)
+
+#define MAX_COMMAND_SIZE 32
+#define SMALL_BUFFER_SIZE 10
+
 const int RED_LED_PIN = 13;
 const int YELLOW_LED_PIN = 12;
 const int GREEN_LED_PIN = 11;
