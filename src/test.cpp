@@ -2,12 +2,6 @@
 #include "test.h"
 #include "macros.h"
 
-int lastButtonState = LOW;
-unsigned long lastDebounceTime = 0;
-unsigned long debounceDelay = 50;
-
-bool buttonPressed = false;
-
 void checkLEDs()
 {
   digitalWrite(RED_LED_PIN, HIGH);
@@ -26,25 +20,25 @@ void checkLEDs()
   delay(200);
 }
 
-void checkButton()
+void checkButton(unsigned long &last_debounce_time, unsigned long &debounce_delay, int &last_button_state, bool &button_pressed)
 {
-  int reading = digitalRead(BUTTON_PIN);
+  int reading = digitalRead(_BUTTON_PIN);
 
-  if (reading != lastButtonState) {
-    lastDebounceTime = millis();
+  if (reading != last_button_state) {
+    last_debounce_time = millis();
   }
 
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    if (reading == HIGH && !buttonPressed) {
+  if ((millis() - last_debounce_time) > debounce_delay) {
+    if (reading == HIGH && !button_pressed) {
       Serial.println("Button pressed");
-      buttonPressed = true;
-    } else if (reading == LOW && buttonPressed) {
+      button_pressed = true;
+    } else if (reading == LOW && button_pressed) {
       Serial.println("Button released");
-      buttonPressed = false;
+      button_pressed = false;
     }
   }
 
-  lastButtonState = reading;
+  last_button_state = reading;
 }
 
 void checkSensor()
@@ -68,7 +62,7 @@ void checkBuzzer()
   delay(500);
 }
 
-void check(int testNo)
+void check(int testNo, unsigned long &last_debounce_time, unsigned long &debounce_delay, int &last_button_state, bool &button_pressed)
 {
   switch (testNo)
   {
@@ -76,7 +70,7 @@ void check(int testNo)
     checkLEDs();
     break;
   case 2:
-    checkButton();
+    checkButton(last_debounce_time, debounce_delay, last_button_state, button_pressed);
     break;
   case 3:
     checkSensor();

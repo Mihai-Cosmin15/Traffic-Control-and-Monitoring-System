@@ -13,6 +13,16 @@
 #define GREEN_PORT PORTB
 #define GREEN_BIT PORTB3
 
+#define BUTTON_DDR DDRD
+#define BUTTON_PORT PORTD
+#define BUTTON_PIN PIND
+#define BUTTON_PIN_REG PD2
+#define BUTTON_BIT 2
+
+#define BUZZER_DDR DDRD
+#define BUZZER_PORT PORTD
+#define BUZZER_BIT 3
+
 #define GREEN_LIGHT 0
 #define RED_LIGHT 1
 #define YELLOW_LIGHT 2
@@ -22,7 +32,7 @@ const int RED_LED_PIN = 13;
 const int YELLOW_LED_PIN = 12;
 const int GREEN_LED_PIN = 11;
 
-const int BUTTON_PIN = 2;
+const int _BUTTON_PIN = 2;
 const int TRIG_PIN = 8;
 const int ECHO_PIN = 7;
 const int BUZZER_PIN = 3;

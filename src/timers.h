@@ -5,5 +5,6 @@
 #include "macros.h"
 
 void init_timer1();
+void init_timer2();
 
 #endif

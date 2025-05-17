@@ -8,6 +8,9 @@ void initLEDs();
 void initButton();
 void initDistanceSensor();
 void initBuzzer();
+void startBuzzer();
+void stopBuzzer();
 void setLEDs(bool red, bool yellow, bool green);
+void greenLightBeep();
 
 #endif
