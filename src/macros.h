@@ -16,6 +16,7 @@
 #define GREEN_LIGHT 0
 #define RED_LIGHT 1
 #define YELLOW_LIGHT 2
+#define BLINKING_GREEN_LIGHT 3
 
 const int RED_LED_PIN = 13;
 const int YELLOW_LED_PIN = 12;
