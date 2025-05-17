@@ -62,7 +62,7 @@ void checkSensor()
 
 void checkBuzzer()
 {
-  tone(BUZZER_PIN, 100);
+  tone(BUZZER_PIN, 200);
   delay(500);
   noTone(BUZZER_PIN);
   delay(500);

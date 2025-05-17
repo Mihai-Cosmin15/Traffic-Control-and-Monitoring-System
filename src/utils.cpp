@@ -2,9 +2,9 @@
 
 void initLEDs()
 {
-  pinMode(RED_LED_PIN, OUTPUT);
-  pinMode(YELLOW_LED_PIN, OUTPUT);
-  pinMode(GREEN_LED_PIN, OUTPUT);
+  RED_DDR |= (1 << RED_BIT);
+  YELLOW_DDR |= (1 << YELLOW_BIT);
+  GREEN_DDR |= (1 << GREEN_BIT);
 }
 
 void initButton()
