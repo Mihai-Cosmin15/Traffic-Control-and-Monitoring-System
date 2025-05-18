@@ -4,8 +4,9 @@
 #include <Arduino.h>
 #include "macros.h"
 #include "usart.h"
+#include "utils.h"
 
-void download_data(int &car_count);
-void manage_command(char command[], int &car_count);
+void download_data();
+void manage_command(char command[]);
 
 #endif

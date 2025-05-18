@@ -35,6 +35,14 @@
 #define MAX_COMMAND_SIZE 32
 #define SMALL_BUFFER_SIZE 10
 
+#define DISTANCE_TO_CAR 30
+#define STANDARD_GREEN_TIME 10
+#define INTERVAL_TIME 30
+
+extern int total_car_count, interval_car_count;
+extern uint8_t state;
+extern int interval_timer, timer, blinking_count, green_light_time;
+
 const int RED_LED_PIN = 13;
 const int YELLOW_LED_PIN = 12;
 const int GREEN_LED_PIN = 11;

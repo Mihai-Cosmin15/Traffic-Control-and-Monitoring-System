@@ -7,16 +7,15 @@
 #include "commands.h"
 
 #define TEST_NO 1
-#define DISTANCE_TO_CAR 30
 
-int green_light_time = 10;
+int green_light_time = STANDARD_GREEN_TIME;
 int total_car_count = 0, interval_car_count = 0;
 bool car_detected = false;
 int command_size = 0;
 char command[MAX_COMMAND_SIZE];
 
 uint8_t state = 0;
-int blinking_count = 0, time_passed = 0, start_time = 0, timer = 0;
+int blinking_count = 0, time_passed = 0, start_time = 0, timer = 0, interval_timer = 0;
 bool button_change = false;
 
 int last_button_state = LOW;
@@ -29,6 +28,7 @@ unsigned long last_detection = 0;
 
 ISR(TIMER1_COMPA_vect)
 {
+	interval_timer++;
 	timer++;
 }
 
@@ -62,8 +62,10 @@ void loop() {
 		USART0_print(&received);
 		if (received == '\n' || received == '\r') {
 			command[command_size++] = '\0';
-			manage_command(command, total_car_count);
-		} else {
+			manage_command(command);
+			strcpy(command, "");
+			command_size = 0;
+		} else if (isAlphaNumeric(received)){
 			if (command_size < MAX_COMMAND_SIZE) {
 				command[command_size++] = received;
 			} else {
@@ -77,26 +79,20 @@ void loop() {
 	switch(state) {
 	case GREEN_LIGHT:
 		if (timer > green_light_time) {
-			setLEDs(false, false, false);
-			state = BLINKING_GREEN_LIGHT;
-			timer = 0;
+			to_blinking_green_light();
 		}
 
 		break;
 	case RED_LIGHT:
+		greenLightBeep();
 		if (timer > 5) {
-			setLEDs(false, true, false);
-			stopBuzzer();
-			state = YELLOW_LIGHT;
-			timer = 0;
+			to_yellow_light();
 		}
 
 		break;
 	case YELLOW_LIGHT:
 		if (timer > 2) {
-			setLEDs(false, false, true);
-			state = GREEN_LIGHT;
-			timer = 0;
+			to_green_light();
 		}
 
 		break;
@@ -107,10 +103,7 @@ void loop() {
 			blinking_count++;
 
 			if (blinking_count == 5) {
-				setLEDs(true, false, false);
-				greenLightBeep();
-				state = RED_LIGHT;
-				blinking_count = 0;
+				to_red_light();
 			}
 		}
 		break;
@@ -126,12 +119,13 @@ void loop() {
 			if (reading == HIGH && last_button_state == LOW) {
 				if (state == GREEN_LIGHT) {
 					timer = max(timer, green_light_time * 3 / 4);
-					Serial.println(timer);
+					char buffer[20];
+					itoa(timer, buffer, 10);
+					USART0_println(buffer);
 				}
 				button_pressed = true;
 			} else if (reading == LOW && last_button_state == HIGH) {
 				button_pressed = false;
-				Serial.println(total_car_count);
 			}
 			last_debounce_time = current_time;
 			last_button_state = reading;
@@ -160,4 +154,6 @@ void loop() {
 		car_detected = false;
 		last_detection = current_time;
 	}
+
+	
 }
