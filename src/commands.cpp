@@ -31,12 +31,12 @@ void showcase()
     interval_car_count = 10;
     interval_timer = INTERVAL_TIME + 1;
 
-    to_green_light();
-
     char buffer[SMALL_BUFFER_SIZE];
     sprintf(buffer, "%d", interval_car_count);
     USART0_print("Showcase\nNumber of cars: ");
     USART0_println(buffer);
+    
+    to_green_light();
 }
 
 void manage_command(char command[])

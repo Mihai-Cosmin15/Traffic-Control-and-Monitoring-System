@@ -86,13 +86,13 @@ void loop() {
 	case RED_LIGHT:
 		greenLightBeep();
 		if (timer > 5) {
-			to_yellow_light();
+			to_green_light();
 		}
 
 		break;
 	case YELLOW_LIGHT:
 		if (timer > 2) {
-			to_green_light();
+			to_red_light();
 		}
 
 		break;
@@ -103,7 +103,7 @@ void loop() {
 			blinking_count++;
 
 			if (blinking_count == 5) {
-				to_red_light();
+				to_yellow_light();
 			}
 		}
 		break;

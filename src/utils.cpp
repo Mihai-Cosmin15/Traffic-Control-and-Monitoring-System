@@ -86,14 +86,13 @@ void to_red_light()
 	setLEDs(true, false, false);
 	last_beep = millis();
 	beep = false;
-	// greenLightBeep();
+	timer = 0;
 	state = RED_LIGHT;
 }
 
 void to_yellow_light()
 {
 	setLEDs(false, true, false);
-	stopBuzzer();
 	state = YELLOW_LIGHT;
 	timer = 0;
 }
