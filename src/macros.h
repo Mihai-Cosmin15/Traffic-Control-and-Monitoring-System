@@ -35,13 +35,23 @@
 #define MAX_COMMAND_SIZE 32
 #define SMALL_BUFFER_SIZE 10
 
-#define DISTANCE_TO_CAR 30
-#define STANDARD_GREEN_TIME 10
-#define INTERVAL_TIME 30
+#define DISTANCE_TO_CAR 50
+#define STANDARD_RED_TIME 15
+#define STANDARD_YELLOW_TIME 3
+#define STANDARD_GREEN_TIME 30
+#define MAX_GREEN_TIME 60
+#define INTERVAL_TIME 600
 
-extern int total_car_count, interval_car_count;
+#define TRAFFIC_WEIGHT 0.7
+#define TREND_WEIGHT 0.3
+#define MAX_CARS_PER_INTERVAL 300
+
+#define SKIP_GREEN_TIMER_P 0.5
+
+extern int total_car_count, interval_car_count, last_interval_car_count;
 extern uint8_t state;
 extern int interval_timer, timer, blinking_count, green_light_time;
+extern float traffic_vol, traffic_trend, traffic_score;
 
 const int RED_LED_PIN = 13;
 const int YELLOW_LED_PIN = 12;

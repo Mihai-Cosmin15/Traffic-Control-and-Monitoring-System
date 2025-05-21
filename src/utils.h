@@ -12,7 +12,7 @@ void startBuzzer();
 void stopBuzzer();
 void setLEDs(bool red, bool yellow, bool green);
 void greenLightBeep();
-int traffic_formula();
+void apply_traffic_formula();
 void to_green_light();
 void to_red_light();
 void to_yellow_light();

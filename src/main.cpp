@@ -9,7 +9,7 @@
 #define TEST_NO 1
 
 int green_light_time = STANDARD_GREEN_TIME;
-int total_car_count = 0, interval_car_count = 0;
+int total_car_count = 0, interval_car_count = 0, last_interval_car_count = -1;
 bool car_detected = false;
 int command_size = 0;
 char command[MAX_COMMAND_SIZE];
@@ -25,6 +25,8 @@ unsigned long debounce_delay = 50;
 bool button_pressed = false;
 
 unsigned long last_detection = 0;
+
+float traffic_vol = 0, traffic_trend = 0, traffic_score = 0;
 
 ISR(TIMER1_COMPA_vect)
 {
@@ -51,6 +53,8 @@ void setup() {
 
 	// Serial.begin(9600);
 	USART0_init(MYUBRR);
+
+	randomSeed(analogRead(0));
 	
 	sei();
 }
@@ -78,20 +82,20 @@ void loop() {
 
 	switch(state) {
 	case GREEN_LIGHT:
-		if (timer > green_light_time) {
+		if (timer >= green_light_time) {
 			to_blinking_green_light();
 		}
 
 		break;
 	case RED_LIGHT:
 		greenLightBeep();
-		if (timer > 5) {
+		if (timer >= STANDARD_RED_TIME) {
 			to_green_light();
 		}
 
 		break;
 	case YELLOW_LIGHT:
-		if (timer > 2) {
+		if (timer >= STANDARD_YELLOW_TIME) {
 			to_red_light();
 		}
 
@@ -118,7 +122,7 @@ void loop() {
 			int reading = (BUTTON_PIN & (1 << BUTTON_BIT)) ? HIGH : LOW;
 			if (reading == HIGH && last_button_state == LOW) {
 				if (state == GREEN_LIGHT) {
-					timer = max(timer, green_light_time * 3 / 4);
+					timer = max(timer, green_light_time * SKIP_GREEN_TIMER_P);
 					char buffer[20];
 					itoa(timer, buffer, 10);
 					USART0_println(buffer);
@@ -150,7 +154,7 @@ void loop() {
 		interval_car_count++;
 		car_detected = true;
 		last_detection = current_time;
-	} else if (distance > DISTANCE_TO_CAR + 10 && car_detected && current_time - last_detection > debounce_delay) {
+	} else if (distance > DISTANCE_TO_CAR + 30 && car_detected && current_time - last_detection > debounce_delay) {
 		car_detected = false;
 		last_detection = current_time;
 	}

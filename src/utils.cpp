@@ -64,9 +64,15 @@ void greenLightBeep()
 	}
 }
 
-int traffic_formula()
+void apply_traffic_formula()
 {
-	return STANDARD_GREEN_TIME + interval_car_count;
+	traffic_vol = min(1.0, (float)interval_car_count / MAX_CARS_PER_INTERVAL);
+	traffic_trend = (float)(interval_car_count - last_interval_car_count) / MAX_CARS_PER_INTERVAL;
+	
+	float tmp_traffic_score = traffic_vol * TRAFFIC_WEIGHT + traffic_trend * TREND_WEIGHT;
+	traffic_score = (float)1 / (1 + exp(-6 * (tmp_traffic_score - 0.5)));
+
+	green_light_time = STANDARD_GREEN_TIME + traffic_score * (MAX_GREEN_TIME - STANDARD_GREEN_TIME);
 }
 
 void to_green_light()
@@ -107,7 +113,10 @@ void to_blinking_green_light()
 
 void update_green_light_time()
 {
-	green_light_time = traffic_formula();
+	if (last_interval_car_count == -1)
+		last_interval_car_count = interval_car_count;
+	apply_traffic_formula();
 	interval_timer = 0;
+	last_interval_car_count = interval_car_count;
 	interval_car_count = 0;
 }

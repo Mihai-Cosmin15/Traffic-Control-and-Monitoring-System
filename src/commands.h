@@ -6,7 +6,6 @@
 #include "usart.h"
 #include "utils.h"
 
-void download_data();
 void manage_command(char command[]);
 
 #endif
